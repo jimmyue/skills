@@ -30,3 +30,10 @@ git switch -c <name>                        创建+切换分支
 git merge <name>                            合并某分支到当前分支
 git branch -d <name>                        删除分支
 git log --graph                             查看分支合并的情况
+git merge --no-ff -m <message> <name>       强制禁用Fast forward模式合并分支
+#BUG分支
+git stash                                   把当前工作现场"储藏"起来
+git stash list                              查看"储藏"的工作现场
+git stash apply                             恢复"储藏"的工作现场
+git stash drop                              删除"储藏"的工作现场
+git cherry-pick <commit_id>                 将版本号对应提交的修改复制到当前分支
