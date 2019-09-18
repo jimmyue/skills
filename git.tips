@@ -1,6 +1,9 @@
+#教程来源： https://www.liaoxuefeng.com/wiki/896043488029600
+
 #创建及提交
 git init                                    创建版本库
 git add <file>                              添加文件到暂存区(Stage)
+git add .                                   添加版本库下所有文件
 git commit -m <message>                     提交添加的文件到工作区
 git status                                  查看版本库当前状态
 git diff <file>                             查看文件修改内容
