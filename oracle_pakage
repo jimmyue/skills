@@ -1,0 +1,246 @@
+/*
+--包定义和包主体需分两个窗口执行才能新建成功
+--包定义（PACKAGE）
+create or replace package PKG_TEST is
+procedure PROC_TEST(v_result out VARCHAR2);
+end PKG_TEST;
+*/
+
+
+--包主体（PACKAGE BODY）
+CREATE OR REPLACE PACKAGE BODY PKG_TEST  AS
+
+/*************************************************************************
+  功能描述：校验数据存储过程
+  过程名  : PROC_TEST
+  参数说明: 无
+  版本号  ：V1.0
+  创建人  : 岳静
+  修改时间: 2019-3-12
+*************************************************************************/
+procedure PROC_TEST(v_result out VARCHAR2) as
+
+v_ymd number;
+v_ymd_end number;
+
+
+begin
+
+select min(to_char(to_date(day,'yyyy-mm-dd'),'yyyymmdd') +0) ymd into v_ymd from fdm_smart_sales_tmp;
+select max(to_char(to_date(day,'yyyy-mm-dd'),'yyyymmdd') +0) ymd into v_ymd_end from fdm_smart_sales_tmp;
+
+if v_ymd is null then dbms_output.put_line('临时表无数据');
+v_result:=v_result||'SMART临时表无数据；';
+else dbms_output.put_line('本次SMART从'||v_ymd||'更新至'||v_ymd_end);
+end if;
+
+---1.重复数据
+for p in (
+select count(*) num from (
+
+select num from ( --城市表
+select t.ymd_id,t.sub_model_id,t.city_id,count(*) num
+from FDM_SMART_SALES_SM_CITY t
+where t.ymd_id>=v_ymd
+group by t.ymd_id,t.sub_model_id,t.city_id
+having count(*)>1)
+union
+select num from ( --省份表
+select t.ymd_id,t.sub_model_id,t.province_id,count(*) num
+from FDM_SMART_SALES_SM_PROVIN t
+where t.ymd_id>=v_ymd
+group by t.ymd_id,t.sub_model_id,t.province_id
+having count(*)>1)
+union
+select num from ( --大区表
+select t.ymd_id,t.sub_model_id,t.dist_id,count(*) num
+from FDM_SMART_SALES_SM_DIST t
+where t.ymd_id>=v_ymd
+group by t.ymd_id,t.sub_model_id,t.dist_id
+having count(*)>1)
+union
+select num from ( --全国表
+select t.ymd_id,t.sub_model_id,t.sales_type,count(*) num
+from Fdm_Smart_Sales_Sm_State t
+where t.ymd_id>=v_ymd
+group by t.ymd_id,t.sub_model_id,t.sales_type
+having count(*)>1)
+
+)) loop
+if p.num>0 then
+dbms_output.put_line('结果表存在重复数据');
+v_result:=v_result||'结果表存在重复数据；';
+end if;
+end loop;
+
+---2.雪佛兰城市
+for p in (
+select count(*) num from (
+
+with t2 as(
+select to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd') +0 ymd,t.month ym,t.province_name
+  ,case when t.location_name in ('省直辖县级行政单位','省直辖县级行政区划') then '省直辖县级行政区划_'||replace(province_name,'省','')
+        when t.location_name in ('县','市辖区') then t.province_name
+        when location_name = '省直辖县级行政区划' then location_name||'_'||replace(province_name,'省','')
+        when t.location_name='黔西南布依族苗族自治' then '黔西南布依族苗族自治州' else t.location_name end location_name
+,case when t.brand_name='NA' then '其他' else t.brand_name end brand_name
+,case when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='凯迪拉克' then 'CADILLAC-OTHERS'
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='雪佛兰' then 'CHEVROLET-OTHERS'
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='别克' then 'BUICK-OTHERS'
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='NA' then 'OTHERS'
+else upper(m.smart_sub_model_ename) end car_name
+,case when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='凯迪拉克' then 51
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='雪佛兰' then 11
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='别克' then 35
+when t.brand_name<>nvl(m.smart_brand_name,0) and t.brand_name='NA' then 67 else m.smart_sub_model_id end sub_model_id
+,t.exhibi_hall_flow,t.new_intention,t.new_order,t.reg_sales
+from FDM_SMART_SALES_TMP_CHEVROLET t
+left join dm_smart_sub_model_chevr_match n on n.smart_model_ori_chevrolet=t.car_name
+left join dm_smart_model_match_ori m on upper(m.smart_model_ori)=upper(n.smart_model_ori) and m.smart_brand_name='雪佛兰'
+where to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd') +0>=v_ymd
+)
+,t3 as( ---车型数据汇总
+select t2.ymd,t2.ym,p.province_name,t2.location_name,t2.brand_name,t2.car_name,t2.sub_model_id
+,sum(t2.new_intention) new_intention,sum(t2.new_order) new_order,sum(t2.reg_sales) reg_sales
+from t2
+left join dm_city c on c.city_name=t2.location_name
+left join dm_province p on p.province_id=c.province_id
+group by t2.ymd,t2.ym,p.province_name,t2.location_name,t2.brand_name,t2.car_name,t2.sub_model_id
+)
+,t4 as( ---清洗结果表
+select s.ymd_id,s.ym_id
+,case when s.city_id=9999 then '直销' else p.province_name end province_name
+,case when s.city_id=9999 then '直销' else c.city_name end city_name
+,b.brand_name,upper(sm.sub_model_ename) sub_model_ename,s.sub_model_id
+,s.new_intention,s.new_order,s.reg_sales
+from FDM_SMART_SALES_SM_CITY s
+left join dm_city c on c.city_id=s.city_id
+left join dm_province p on p.province_id=c.province_id
+left join dm_smart_sub_model sm on sm.sub_model_id=s.sub_model_id
+left join dm_brand b on b.brand_id=sm.brand_id
+where b.brand_name='雪佛兰' and s.ymd_id>=v_ymd
+)
+select * from t3
+minus
+select * from t4
+
+)) loop
+if p.num>0 then
+dbms_output.put_line('雪佛兰城市表异常');
+v_result:=v_result||'雪佛兰城市表异常；';
+end if;
+end loop;
+
+---3.凯迪拉克、别克城市
+for p in (
+select count(*) num from (
+
+with t3 as(
+ select to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd') +0 ymd,t.month ym
+  ,case when t.location_name in ('省直辖县级行政单位','省直辖县级行政区划') then '省直辖县级行政区划_'||replace(province_name,'省','')
+        when t.location_name in ('县','市辖区') then t.province_name
+        when location_name = '省直辖县级行政区划' then location_name||'_'||replace(province_name,'省','')
+        when t.location_name='黔西南布依族苗族自治' then '黔西南布依族苗族自治州' else t.location_name end location_name
+  ,case when t.brand_name='NA' then '其他'
+        else t.brand_name end brand_name
+  ,case when t.brand_name='凯迪拉克' and t.brand_name<>nvl(m.smart_brand_name,0) then 'CADILLAC-OTHERS'
+        when t.brand_name='凯迪拉克' and t.brand_name=nvl(m.smart_brand_name,0) then upper(m.smart_sub_model_ename)
+        when t.brand_name='别克' and t.brand_name<>nvl(m.smart_brand_name,0) then 'BUICK-OTHERS'
+        when t.brand_name='别克' and t.brand_name=nvl(m.smart_brand_name,0) then upper(m.smart_sub_model_ename)
+        when t.brand_name='NA' then 'OTHERS' end car_name
+  ,case when t.brand_name='凯迪拉克' and t.brand_name<>nvl(m.smart_brand_name,0) then 51
+        when t.brand_name='凯迪拉克' and t.brand_name=nvl(m.smart_brand_name,0) then m.smart_sub_model_id
+        when t.brand_name='别克' and t.brand_name<>nvl(m.smart_brand_name,0) then 35
+        when t.brand_name='别克' and t.brand_name=nvl(m.smart_brand_name,0) then m.smart_sub_model_id
+        when t.brand_name='NA' then 67 end sub_model_id
+,t.new_intention,t.new_order,t.reg_sales,t.whole_sales
+from fdm_smart_sales_ori_total t
+left join DM_SMART_MODEL_MATCH_ORI m on upper(m.smart_model_ori)=upper(t.car_name) and t.brand_name<>'雪佛兰'
+where t.brand_name<>'雪佛兰' and to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd') +0>=v_ymd
+)
+,t4 as(
+select t3.ymd,t3.ym,t3.location_name,t3.brand_name,t3.car_name,t3.sub_model_id
+,sum(t3.new_intention) new_intention,sum(t3.new_order) new_order
+,sum(t3.reg_sales) reg_sales,sum(t3.whole_sales) whole_sales
+from t3
+group by t3.ymd,t3.ym,t3.location_name,t3.brand_name,t3.car_name,t3.sub_model_id
+)
+,t5 as(
+select s.ymd_id,s.ym_id
+,case when s.city_id=9999 then '直销' else c.city_name end city_name
+,b.brand_name,upper(sm.sub_model_ename),s.sub_model_id
+,s.new_intention,s.new_order,s.reg_sales,s.whole_sales
+from FDM_SMART_SALES_SM_CITY s
+left join dm_city c on c.city_id=s.city_id
+left join dm_province p on p.province_id=c.province_id
+left join dm_smart_sub_model sm on sm.sub_model_id=s.sub_model_id
+left join dm_brand b on b.brand_id=sm.brand_id
+where sm.brand_id<>14 and s.ymd_id>=v_ymd
+)
+select * from t4
+minus
+select * from t5
+
+)) loop
+if p.num>0 then
+dbms_output.put_line('别克、凯迪拉克城市表异常');
+v_result:=v_result||'别克、凯迪拉克城市表异常；';
+end if;
+end loop;
+
+---4.品牌城市流量
+for p in (
+select count(*) num from (
+
+with t1 as(
+select t.year,to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd') +0 ymd
+,to_number(e.yearnum||lpad(e.monthnum,2,0)||lpad(e.weeknum,2,0)) ymw
+,case when t.brand_name='NA' then '其他' else t.brand_name end brand_name
+,case when t.location_name in ('省直辖县级行政单位','省直辖县级行政区划') then '省直辖县级行政区划_'||replace(province_name,'省','')
+      when t.location_name in ('县','市辖区') then t.province_name
+      when location_name = '省直辖县级行政区划' then location_name||'_'||replace(province_name,'省','')
+      when t.location_name='黔西南布依族苗族自治' then '黔西南布依族苗族自治州' else t.location_name end location_name
+,t.exhibi_hall_flow
+from fdm_smart_sales_ori_total t
+left join DM_SMART_MODEL_MATCH_ORI m on upper(m.smart_model_ori)=upper(t.car_name)
+left join dm_smart_week_define e on e.yearnum||lpad(e.monthnum,2,0)=to_number(t.month)
+     and substr(t.day,instr(t.day,'-',-1)+1) between e.begin_day and e.end_day
+where to_char(to_date(t.day,'yyyy-mm-dd'),'yyyymmdd')+0>=v_ymd
+),
+t2 as(
+select t1.ymd,t1.ymw,b.brand_id
+,case when t1.location_name='直销' then 9999 else c.city_id end city_id
+,sum(t1.exhibi_hall_flow) exhibi_hall_flow
+from t1
+left join dm_brand b on b.brand_name=t1.brand_name
+left join dm_city c on c.city_name=t1.location_name
+group by t1.ymd,t1.ymw,b.brand_id,c.city_id,t1.location_name
+),
+t3 as(
+select w.ymd_id,w.ymw_id,w.brand_id,w.city_id,w.exhibi_hall_flow
+from fdm_smart_brand_city_flow w
+where w.ymd_id>=v_ymd
+)
+select * from t2
+minus
+select * from t3
+
+)) loop
+if p.num>0 then
+dbms_output.put_line('品牌城市流量表异常');
+v_result:=v_result||'品牌城市流量表异常；';
+end if;
+end loop;
+
+if v_result is null and v_ymd =v_ymd_end then v_result:=v_ymd||'数据正常！';
+elsif v_result is null and v_ymd<>v_ymd_end then v_result:=v_ymd||'-'||v_ymd_end||'数据正常！';
+end if;
+
+dbms_output.put_line('执行完成！');
+exception
+  when no_data_found then
+     dbms_output.put_line('异常');
+
+end PROC_TEST;
+
+END PKG_TEST;
