@@ -29,6 +29,7 @@ git switch <name>                           切换分支
 git switch -c <name>                        创建+切换分支
 git merge <name>                            合并某分支到当前分支
 git branch -d <name>                        删除分支
+git branch -D <name>                        强行删除分支
 git log --graph                             查看分支合并的情况
 git merge --no-ff -m <message> <name>       强制禁用Fast forward模式合并分支
 #BUG分支
@@ -37,3 +38,20 @@ git stash list                              查看"储藏"的工作现场
 git stash apply                             恢复"储藏"的工作现场
 git stash drop                              删除"储藏"的工作现场
 git cherry-pick <commit_id>                 将版本号对应提交的修改复制到当前分支
+#多人协作
+git remote -v                               查看远程库信息，没有推送权限则看不到push地址
+git push origin <name>                      推送分支到远程库
+git checkout -b dev origin/<name>           从远程库更新分支到本地
+git pull                                    从远程库抓取最新代码合并
+git rebase                                  把分叉的提交历史“整理”成一条直线
+#标签管理
+git tag <tagname>                           创建标签
+git tag -a <tagname> -m <message>           指定标签信息
+git tag                                     查看所有标签
+git show <tagname>                          查看标签信息
+git tag -d <tagname>                        删除标签
+git push origin --tags                      推送所有标签到远程
+git push origin <tagname>                   推送某个标签到远程
+git push origin :refs/tags/<tagname>        删除一个远程标签
+
+
