@@ -9,7 +9,7 @@ select name1||'-'||name2 一二级
 
 3.四舍五入ROUND
 例：ROUND(number, num_digits)
-如果 num_digits 大于 0（零），则将数字四舍五入到指定的小数位。
+如果 num_digits 大于 0，则将数字四舍五入到指定的小数位。
 如果 num_digits 等于 0，则将数字四舍五入到最接近的整数。
 如果 num_digits 小于 0，则在小数点左侧前几位进行四舍五入。
 
@@ -31,10 +31,10 @@ row_number() over(partition by ssm.YEAR order by ssm.month_id)
 8.substrb,substr函数区别
 对于字母来说，substr与substrb作用时一样的，
 但对于汉字来说，substr是按字来取值，而substrb是按字节来取值，当所取长度为奇数时，则自动舍弃最后一位字节
-SQL> select substr('今天是个好日子',3,5) from dual;    是个好日子
-SQL> select substrb('今天是个好日子',3,5) from dual;   天是
-SQL> select substr('abcdef',3,4) from dual;            cdef
-SQL> select substrb('abcdef',3,4) from dual;           cdef
+select substr('今天是个好日子',3,5) from dual;    是个好日子
+select substrb('今天是个好日子',3,5) from dual;   天是
+select substr('abcdef',3,4) from dual;            cdef
+select substrb('abcdef',3,4) from dual;           cdef
 
 9.lag和lead
 lag取排完序前一条数据；lead取排完序后一条数据
@@ -43,8 +43,7 @@ lead(t1.sales) over(order by t1.month_id)
 
 10.link
 表与表比对时经常需要跨库查询，可以创建dblink
-若以创建，登录帐号不同时可在表前加用户名
-faw_car_dw.TB_REGDATA_CLH@link_cms 
+登录帐号不同时可在表前加用户名faw_car_dw.TB_REGDATA_CLH@link_cms 
 
 11.nlssort排序
 NLS_SORT = SCHINESE_PINYIN_M   按拼音
@@ -63,7 +62,7 @@ group by m.cash_ince_file_id
 select t.rank, WMSYS.WM_CONCAT(t.Name) TIME From t_menu_item t GROUP BY t.rank
 
 
-13.Oracle 列转行函数 Listagg()
+13.Oracle 列转行函数 Listagg
 listagg(city,',') within GROUP (order by city) over (partition by city)
 
 14.多项取最大值ID项(取相同父类中ID最新的子类项）
@@ -77,7 +76,7 @@ union all  并集，公共部分只有包含两次
 intersect  交集
 minus      差集
 对比时不要加order by，也不要进行字段连接，这样效率会提高很多
-并集时若字段对不上是合并不了的，可以select补：    '' level2name  
+并集时若字段对不上是合并不了的，可以select补字段：    '' level2name  
 
 16.特殊函数ltrim、rtrim、ceil、floor、mod、sign、add_months、last_day、sysdate、user、lpad、rpad
 select ltrim('jimmy','ji') 去掉左边相同,rtrim('jimmy','y') 去掉右边相同,ceil(9.9) 大于等于值最大整数
@@ -134,7 +133,6 @@ DROP SEQUENCE myseq1001
 24.查询历史时间数据
 select * from da_area as of timestamp to_date('2016-05-17 07:40:00','yyyy-mm-dd hh24:mi:ss')
 
-
 25.TRANSLATE(expr,from,to)
 expr: 代表一串字符，from 与 to 是从左到右一一对应的关系，如果不能对应，则视为空值
 例：取c.data_content中的数字
@@ -189,9 +187,7 @@ SELECT b.sid      oracleID,
   FROM v$process a, v$session b, v$sqlarea c
  WHERE a.addr = b.paddr
    AND b.sql_hash_value = c.hash_value
-
-   and b.username='BUICK4IT'
-   ;
+   and b.username='BUICK4IT';
 
 --查询锁表 
 SELECT object_name, machine, s.sid, s.serial#
@@ -201,8 +197,6 @@ SELECT object_name, machine, s.sid, s.serial#
 
 31.单行字符串拆分行
 select regexp_substr(city_id,'[^,]+',1,rownum) split from (
-
 select '56,332,250,91,297,301,149,167,69,208,85,100' city_id from dual
-
 )
 connect by rownum<=length(city_id)-length(replace(city_id,','))+1
