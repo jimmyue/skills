@@ -37,3 +37,5 @@ Properties key: allure.tests.management.pattern
 Properties value: http://tms.company.com/%s
 Jdk : dk1.8.0_221(选择自己设置的)
 Report path: allure-report
+
+八.生成的Allure报告中，左侧菜单栏最下方可以切换显示语言
