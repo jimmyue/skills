@@ -1,0 +1,13 @@
+jmeter下载，最新只有3.1版本支持PerfMon
+http://archive.apache.org/dist/jmeter/binaries/
+
+jmeter服务器监控教程
+https://www.cnblogs.com/guoyuanping/p/8284320.html
+
+linux添加指定端口到防火墙： firewall-cmd --add-port=4444/tcp --permanent
+重新载入添加的端口： firewall-cmd --reload
+查询指定端口是否开启成功： firewall-cmd --query-port=4444/tcp
+指定Server Agent端口： ./startAgent.sh --udp-port 0 --tcp-port 1234
+不挂断后台运行指令： nohup command &
+查看端口状态： lsof -i:4444
+结束进程： kill -9 pid
