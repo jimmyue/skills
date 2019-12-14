@@ -1,0 +1,11 @@
+【mysql】
+1.root账号登陆mysql
+mysql -u root -p
+
+2.外网访问mysql需修改权限
+update user set host='%' where user = 'root';
+然后再重启
+systemctl restart mysqld
+开启防火墙端口
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+firewall-cmd --reload
