@@ -9,3 +9,9 @@ systemctl restart mysqld
 开启防火墙端口
 firewall-cmd --zone=public --add-port=3306/tcp --permanent
 firewall-cmd --reload
+
+【设置多台电脑访问虚拟机】
+https://blog.csdn.net/u012268339/article/details/61204801
+1.首先得同一个局域网的PC才可以连接
+2.装虚拟机的PC需关闭防火墙
+3.如果设置失败可以尝试edit->virtual network editor->重置网络再配置
