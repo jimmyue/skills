@@ -15,3 +15,7 @@ https://blog.csdn.net/u012268339/article/details/61204801
 1.首先得同一个局域网的PC才可以连接
 2.装虚拟机的PC需关闭防火墙
 3.如果设置失败可以尝试edit->virtual network editor->重置网络再配置
+
+【jenkins】
+https://www.cnblogs.com/loveyouyou616/p/8714544.html
+https://www.cnblogs.com/du-hong/p/10655635.html
