@@ -19,3 +19,14 @@ https://blog.csdn.net/u012268339/article/details/61204801
 【jenkins】
 https://www.cnblogs.com/loveyouyou616/p/8714544.html
 https://www.cnblogs.com/du-hong/p/10655635.html
+service jenkins start/stop/restart
+
+【python安装】
+https://www.jianshu.com/p/c169a76862cf
+https://oracle.github.io/odpi/doc/installation.html#linux
+
+【linux指令】
+rpm -qal |grep mysql  查看软件是否安装
+ps -a                 查看所有进程
+kill -9 pid           杀死进程
+

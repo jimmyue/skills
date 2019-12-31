@@ -4,25 +4,13 @@ Docker提供了一个很简单的机制来创建镜像或者更新现有的镜�
 容器是从镜像创建的运行实例。它可以被启动、开始、停止、 删除。每个容器都是相互隔离的、保证安全的平台。
 【仓库(Repository)】
 仓库是集中存放镜像文件的场所。仓库分为公开仓库(Public)和私有仓库(Private)两种形式。
+【阿里云镜像】
+https://cr.console.aliyun.com/cn-hangzhou/instances/images
+342539587@qq.com
 
 【centos上docker安装】
-1.卸载旧版本
-yum remove docker \
-           docker-client \
-           docker-client-latest \
-           docker-common \
-           docker-latest \
-           docker-latest-logrotate \
-           docker-logrotate \
-           docker-selinux \
-           docker-engine-selinux \
-           docker-engine
-2.安装依赖包
-yum install -y yum-utils \
-               device-mapper-persistent-data \
-               lvm2
-3.安装docker
-yum install docker
+sudo yum update -y
+https://www.runoob.com/docker/centos-docker-install.html
 
 【docker服务】
 systemctl start docker   启动
@@ -33,9 +21,10 @@ systemctl status docker  查看docker状态
 
 【镜像操作】
 docker images            查看所有镜像
-docker search centos     查找相关镜像
 docker pull centos       下载centos镜像
 docker rmi 镜像id        删除镜像
+docker search --no-trunc centos                 查找相关镜像
+docker tag IMAGE_ID jimmycentos:v3.0            重命名镜像名称
 docker commit centos7 new_image_centos7:v1.0    保存现有镜像(修改端口映射可通过先保存镜像再创建容器解决)
 docker save imageID > /home/centos7_update.jar  保存镜像到本地
 docker load < /home/xxx.jar                     加载备份文件到镜像
@@ -48,7 +37,7 @@ docker stop container-name/container-id    停止容器
 docker logs container-name/container-id    容器日志
 docker rm container-name/container-id      删除容器
 docker rename JimmyCentos JimmyCentos7     重命名容器名称
-docker run -itd -p 8080:8080 --name centos7 imageID /bin/bash  创建并运行容器
-docker exec -it container-name/container-id /bin/sh            进入容器
-docker cp container-id:容器文件路径 本地路径                   文件传输(容器 -> 本机)
-docker cp 本地文件路径 container-id:容器路径                   文件传输(本机 -> 容器)
+docker run -itd -p 8080:8080 --privileged=true --name centos7 imageID /usr/sbin/init  创建并运行容器
+docker exec -it --user root container-name/container-id /bin/sh  以root用户进入容器
+docker cp container-id:容器文件路径 本地路径                     文件传输(容器 -> 本机)
+docker cp 本地文件路径 container-id:容器路径                     文件传输(本机 -> 容器)
