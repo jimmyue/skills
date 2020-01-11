@@ -41,3 +41,14 @@ docker run -itd -p 8080:8080 --privileged=true --name centos7 imageID /usr/sbin/
 docker exec -it --user root container-name/container-id /bin/sh  以root用户进入容器
 docker cp container-id:容器文件路径 本地路径                     文件传输(容器 -> 本机)
 docker cp 本地文件路径 container-id:容器路径                     文件传输(本机 -> 容器)
+
+【添加容器端口映射】注意是否关闭防火墙或者添加防火墙端口
+systemctl stop docker
+CD /var/lib/docker/containers/[容器ID]
+vi hostconfig.json添加端口
+vi config.v2.json添加端口
+systemctl start docker
+systemctl status firewalld.service   #查看防火墙状态
+netstat -anpt                        #查看端口状态
+
+
