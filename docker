@@ -44,9 +44,9 @@ docker cp 本地文件路径 container-id:容器路径                     文�
 
 【添加容器端口映射】注意是否关闭防火墙或者添加防火墙端口
 systemctl stop docker
-CD /var/lib/docker/containers/[容器ID]
-vi hostconfig.json添加端口
-vi config.v2.json添加端口
+cd /var/lib/docker/containers/[容器ID]
+vi hostconfig.json      #添加需要映射的端口
+vi config.v2.json       #添加需要映射的端口
 systemctl start docker
 systemctl status firewalld.service   #查看防火墙状态
 netstat -anpt                        #查看端口状态

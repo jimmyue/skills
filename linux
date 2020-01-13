@@ -32,6 +32,8 @@ https://www.jianshu.com/p/c169a76862cf
 https://oracle.github.io/odpi/doc/installation.html#linux
 
 【linux指令】
-rpm -qal |grep mysql  查看软件是否安装
-ps -a                 查看所有进程
-kill -9 pid           杀死进程
+rpm -qal |grep mysql   查看软件是否安装
+ps -a                  查看所有进程
+kill -9 pid            杀死进程
+netstat -anpt          查看端口使用情况
+rpm -qa | grep docker  查看是否安装该软件
