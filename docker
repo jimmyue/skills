@@ -12,6 +12,12 @@ https://cr.console.aliyun.com/cn-hangzhou/instances/images
 sudo yum update -y
 https://www.runoob.com/docker/centos-docker-install.html
 
+【docker上分布式locust】
+https://docs.locust.io/en/stable/running-locust-docker.html#running-your-tests
+
+docker run -p 18089:8089 --volume /jimmy/locustfile:/mnt/locust -e LOCUSTFILE_PATH=/mnt/locust/rebate.py -e TARGET_URL=http://www.rebate-master.com -e LOCUST_MODE=master --name master locustio/locust
+docker run -p 19089:8089 --volume /jimmy/locustfile:/mnt/locust -e LOCUSTFILE_PATH=/mnt/locust/rebate.py -e TARGET_URL=http://www.rebate-master.com -e LOCUST_MODE=slave -e LOCUST_MASTER_HOST=http://172.16.4.71/ -e LOCUST_MASTER_PORT=18089 locustio/locust
+
 【docker服务】
 systemctl start docker   启动
 systemctl stop docker    停止
