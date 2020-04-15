@@ -135,3 +135,15 @@ kB_wrtn：  写入的总数量数据量；
 如果%idle值高，表示CPU较空闲
 如果%idle值高但系统响应慢时，可能是CPU等待分配内存，应加大内存容量。
 如果%idle值持续低于10，表明CPU 处理能力相对较低，系统中最需要解决的资源是 CPU。
+
+【nmon】推荐
+wget https://nchc.dl.sourceforge.net/project/nmon/nmon16d_x86.tar.gz
+mkdir nmon16d                                 #创建文件夹
+tar -zxvf nmon16d_x86.tar.gz  -C nmon16d      #解压
+chmod +x nmon_x86_64_centos7                  #对应系统版本文件，添加执行权限
+mv nmon_x86_64_centos7 /usr/local/bin/nmon    #加入环境变量
+nmon                                          #运行nmon
+nmon -f -T -s 5 -c 12 -m /file_folder         #每隔5秒采集一次,一共采集12次
+ps -ef | grep nmon                            #查看运行的nmon进程
+kill -9 pid                                   #杀掉进程
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Power+Systems/page/nmon_analyser  #nmon analyser下载
