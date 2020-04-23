@@ -200,3 +200,16 @@ select regexp_substr(city_id,'[^,]+',1,rownum) split from (
 select '56,332,250,91,297,301,149,167,69,208,85,100' city_id from dual
 )
 connect by rownum<=length(city_id)-length(replace(city_id,','))+1
+
+
+--创建函数：计算字符串对应逻辑运算
+create or replace function F_VarCount(c_char varchar2) return number is
+  v_num number(10,2);
+begin
+  --执行动态SQL
+  execute immediate 'select ' || c_char || ' from dual' into v_num;
+  return v_num;
+exception
+  when others then
+    return null;
+end;
