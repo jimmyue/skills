@@ -146,4 +146,4 @@ nmon                                          #运行nmon
 nmon -f -T -s 5 -c 12 -m /file_folder         #每隔5秒采集一次,一共采集12次
 ps -ef | grep nmon                            #查看运行的nmon进程
 kill -9 pid                                   #杀掉进程
-https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Power+Systems/page/nmon_analyser  #nmon analyser下载
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Power+Systems/page/nmon_analyser  #下载nmon analyser,打开采集的文件生成报告数据
