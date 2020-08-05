@@ -1,0 +1,68 @@
+一、元素定位
+find_element_by_id
+find_element_by_name
+find_element_by_tag_name
+find_element_by_class_name
+find_element_by_css_selector
+find_element_by_xpath
+find_element_by_link_text
+find_element_by_partial_link_text
+
+二、条件判断
+title_is                                         验证标题是否为
+title_contains                                   验证标题是否包含
+presence_of_element_located                      验证元素是否出现
+presence_of_all_elements_located                 验证元素集是否出现
+visibility_of                                    验证元素是否可见
+visibility_of_element_located                    验证元素是否可见
+visibility_of_any_elements_located               验证元素是否可见
+invisibility_of_element_located                  验证元素是否可见
+text_to_be_present_in_element                    验证文本是否出现在元素中(text)
+text_to_be_present_in_element_value              验证文本是否出现在元素中(value)
+element_to_be_clickable                          验证元素是否可点击
+element_to_be_selected                           验证元素的选中状态
+element_located_to_be_selected                   验证元素的选中状态
+element_selection_state_to_be                    验证元素的选中状态
+element_located_selection_state_to_be            验证元素的选中状态
+number_of_windows_to_be                          验证窗口状态
+new_window_is_opened                             验证窗口状态
+frame_to_be_avaiable_and_switch_to_it            验证frame是否可切入
+alert_is_present                                 验证弹窗是否出现
+staleness_of                                     验证元素是否在DOM中
+
+三、JS执行
+execute_script
+execute_async_script
+
+四、窗口操作
+current_window_handle             获取当前窗口的handle
+handlewindow_handles              获取当前所有窗口
+maximize_window                   窗口最大化
+set_window_size                   设置窗口大小
+get_window_size                   获取窗口大小
+set_window_position               设置窗口位置
+get_window_position               获取窗口位置
+switch_to_window                  切换至指定窗口
+switch_to_default_content         切换至默认的frame
+switch_to_frame                   切换至指定frame
+switch_to_alert                   切换至alert窗口
+switch_to_active_element          切换至当前激活的元素
+
+五、鼠标键盘
+click                             单击指定元素
+context_click                     右击
+double_click                      双击
+click_and_hold                    指定元素按下鼠标和release配套使用
+release                           在当前元素释放鼠标
+drag_and_drop                     拖拽动作
+drag_and_drop_by_offset           从当前元素按下鼠标左键往指定的(x,y)坐标移动，然后释放鼠标
+key_down                          按下指定的键盘按键
+key_up                            释放当前键盘按键
+move_by_offset                    将鼠标从当前位置移动至指定的(x,y)位置
+move_to_element                   将鼠标移动至指定元素的中间位置
+move_to_element_with_offset       将鼠标移动到指定的元素，其偏移(x,y)是相对该元素的左上角的偏移
+send_keys                         在当前焦点的元素中模拟键盘输入 
+send_keys_to_element              给指定元素模拟键盘输入 
+perform                           运行一组鼠标键盘动作 
+
+
