@@ -11,6 +11,11 @@ https://cr.console.aliyun.com/cn-hangzhou/instances/images
 【centos上docker安装】
 sudo yum update -y
 https://www.runoob.com/docker/centos-docker-install.html
+vim /etc/docker/daemon.json
+{
+  "registry-mirrors": ["https://in7voitv.mirror.aliyuncs.com"]
+}
+
 
 【docker服务】
 systemctl start docker   启动
