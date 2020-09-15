@@ -1,39 +1,37 @@
-SDK manager更新包时以管理员身份打开
+# docker拉取镜像
+docker pull openstf/stf:latest 
+docker pull sorccu/adb:latest
+docker pull rethinkdb:latest 
+docker pull openstf/ambassador:latest
+docker pull nginx:latest 
 
-nox_adb.exe connect 127.0.0.1:62001
-1：使用命令：netstat -aon|findstr "5037" 找到占用5037端口的进程PID。
-2：使用命令：tasklist|findstr "5440" 通过PID找出进程。
-3：调出任务管理器，找到这个进程，结束进程。
-4：使用命令:adb start-server 启动adb就行了
+# 启动数据库
+docker run -d --name rethinkdb -v /srv/rethinkdb:/data --net host rethinkdb rethinkdb --bind all --cache-size 8192 --http-port 8090
+# 启动adb service
+docker run -d --name adbd --privileged -v /dev/bus/usb:/dev/bus/usb --net host sorccu/adb:latest
+# 启动stf 
+docker run -d --name stf --net host openstf/stf stf local --public-ip 10.10.10.71 (master_ip)
 
-#安装APP
-adb -s 127.0.0.1:62001 install D:\app\DaaS.apk
+# 访问STF云测平台
+http://10.10.10.71:7100
 
-#获取设备名称
-adb devices
-#获取系统版本号
-adb shell getprop ro.build.version.release
-#获取apk的包名，activity名称
-adb shell dumpsys activity | find "mFocusedActivity"                   #安卓8以前
-adb shell dumpsys activity activities | findstr mResumedActivity   #安卓8以后
+#slave开启端口，供master连接
+#低版本adb
+adb -a -P 5037 fork-server server 
+#高版本adb
+adb nodaemon server -a
 
-{
-  "platformName": "Android",
-  "platformVersion": "10",
-  "automationName": "Appium",
-  "deviceName": "UQG0220513006347",
-  "appPackage": "com.ways.iWays",
-  "appActivity": "ways.main.classes.main.MainActivity"
-}
+#master-slave主从连接
+1.进入stf容器；
+docker exec -it container-id /bin/bash
+2.执行stf服务，10.10.10.71为master_ip；
+stf local --public-ip 10.10.10.71 --allow-remote
+3.查看执行服务后的provider日志，修改--adb-host后的IP为slave_ip，执行即可连接slave，依次类推可以连接多个slave。
+stf provider --name localhost.localdomain --min-port 7400 --max-port 7700 --connect-sub tcp://127.0.0.1:7114 --connect-push tcp://127.0.0.1:7116 --group-timeout 900 --public-ip 10.24.51.1 --storage-url http://localhost:7100/ --adb-host 127.0.0.1 --adb-port 5037 --vnc-initial-size 600x800 --mute-master never --allow-remote
 
-#BY_ID
-driver.find_element_by_id("输入值")
-driver.find_element_by_android_uiautomator('new UiSelector().resourceId("输入值")')
-#BY_NAME
-driver.find_element_by_android_uiautomator('new UiSelector().text("输入值")')
-#BY_ACCESSIBILITY_ID
-driver.find_element_by_accessibility_id("输入值")
-driver.find_element_by_android_uiautomator('new UiSelector().description("输入值")')
-#BY_CLASS_NAME
-driver.find_element_by_class_name("输入值")
-driver.find_element_by_android_uiautomator('new UiSelector().className("输入值")')
+#STF中appium自动化测试
+1.进入appium容器；
+docker exec -it container-id /bin/bash
+2.查看STF控制面板页面-远程调试指令，在appium容器中执行
+adb connect 10.10.10.71:7401
+3.STF中允许后，连接成功即可进行app自动化测试
