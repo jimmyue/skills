@@ -1,0 +1,39 @@
+SDK manager更新包时以管理员身份打开
+
+nox_adb.exe connect 127.0.0.1:62001
+1：使用命令：netstat -aon|findstr "5037" 找到占用5037端口的进程PID。
+2：使用命令：tasklist|findstr "5440" 通过PID找出进程。
+3：调出任务管理器，找到这个进程，结束进程。
+4：使用命令:adb start-server 启动adb就行了
+
+#安装APP
+adb -s 127.0.0.1:62001 install D:\app\DaaS.apk
+
+#获取设备名称
+adb devices
+#获取系统版本号
+adb shell getprop ro.build.version.release
+#获取apk的包名，activity名称
+adb shell dumpsys activity | find "mFocusedActivity"                   #安卓8以前
+adb shell dumpsys activity activities | findstr mResumedActivity   #安卓8以后
+
+{
+  "platformName": "Android",
+  "platformVersion": "10",
+  "automationName": "Appium",
+  "deviceName": "UQG0220513006347",
+  "appPackage": "com.ways.iWays",
+  "appActivity": "ways.main.classes.main.MainActivity"
+}
+
+#BY_ID
+driver.find_element_by_id("输入值")
+driver.find_element_by_android_uiautomator('new UiSelector().resourceId("输入值")')
+#BY_NAME
+driver.find_element_by_android_uiautomator('new UiSelector().text("输入值")')
+#BY_ACCESSIBILITY_ID
+driver.find_element_by_accessibility_id("输入值")
+driver.find_element_by_android_uiautomator('new UiSelector().description("输入值")')
+#BY_CLASS_NAME
+driver.find_element_by_class_name("输入值")
+driver.find_element_by_android_uiautomator('new UiSelector().className("输入值")')

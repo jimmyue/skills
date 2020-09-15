@@ -1,0 +1,30 @@
+# docker拉取镜像
+docker pull openstf/stf:latest 
+docker pull sorccu/adb:latest
+docker pull rethinkdb:latest 
+docker pull openstf/ambassador:latest
+docker pull nginx:latest 
+
+# 启动数据库
+sudo docker run -d --name rethinkdb -v /srv/rethinkdb:/data --net host rethinkdb rethinkdb --bind all --cache-size 8192 --http-port 8090
+# 启动adb service
+sudo docker run -d --name adbd --privileged -v /dev/bus/usb:/dev/bus/usb --net host sorccu/adb:latest
+# 启动stf 
+docker run -d --name stf --net host openstf/stf stf local --public-ip 192.168.2.111(本机ip)
+
+# 访问STF云测平台
+http://192.168.2.111:7100
+
+#slave开启端口，供master连接
+#低版本adb
+adb -a -P 5037 fork-server server 
+#高版本adb
+adb nodaemon server -a
+
+#master-slave主从连接
+1.进入stf容器；
+docker exec -it container-id /bin/bash
+2.执行stf服务，10.10.10.71为master_ip；
+stf local --public-ip 10.10.10.71 --allow-remote
+3.查看执行服务后的provider日志，修改--adb-host后的IP为slave_ip，执行即可连接slave，依次类推可以连接多个slave。
+stf provider --name localhost.localdomain --min-port 7400 --max-port 7700 --connect-sub tcp://127.0.0.1:7114 --connect-push tcp://127.0.0.1:7116 --group-timeout 900 --public-ip 10.24.51.1 --storage-url http://localhost:7100/ --adb-host 127.0.0.1 --adb-port 5037 --vnc-initial-size 600x800 --mute-master never --allow-remote
