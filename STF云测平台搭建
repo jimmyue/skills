@@ -6,14 +6,14 @@ docker pull openstf/ambassador:latest
 docker pull nginx:latest 
 
 # 启动数据库
-sudo docker run -d --name rethinkdb -v /srv/rethinkdb:/data --net host rethinkdb rethinkdb --bind all --cache-size 8192 --http-port 8090
+docker run -d --name rethinkdb -v /srv/rethinkdb:/data --net host rethinkdb rethinkdb --bind all --cache-size 8192 --http-port 8090
 # 启动adb service
-sudo docker run -d --name adbd --privileged -v /dev/bus/usb:/dev/bus/usb --net host sorccu/adb:latest
+docker run -d --name adbd --privileged -v /dev/bus/usb:/dev/bus/usb --net host sorccu/adb:latest
 # 启动stf 
-docker run -d --name stf --net host openstf/stf stf local --public-ip 192.168.2.111(本机ip)
+docker run -d --name stf --net host openstf/stf stf local --public-ip 10.10.10.71 (master_ip)
 
 # 访问STF云测平台
-http://192.168.2.111:7100
+http://10.10.10.71:7100
 
 #slave开启端口，供master连接
 #低版本adb
@@ -28,3 +28,12 @@ docker exec -it container-id /bin/bash
 stf local --public-ip 10.10.10.71 --allow-remote
 3.查看执行服务后的provider日志，修改--adb-host后的IP为slave_ip，执行即可连接slave，依次类推可以连接多个slave。
 stf provider --name localhost.localdomain --min-port 7400 --max-port 7700 --connect-sub tcp://127.0.0.1:7114 --connect-push tcp://127.0.0.1:7116 --group-timeout 900 --public-ip 10.24.51.1 --storage-url http://localhost:7100/ --adb-host 127.0.0.1 --adb-port 5037 --vnc-initial-size 600x800 --mute-master never --allow-remote
+
+#STF中appium自动化测试
+1.docker创建appium容器
+docker run --privileged -d -p 4723:4723 -v ~/.android:/root/.android -v /dev/bus/usb:/dev/bus/usb --name appium appium/appium
+2.进入appium容器；
+docker exec -it container-id /bin/bash
+3.查看STF控制面板页面-远程调试指令，在appium容器中执行
+adb connect 10.10.10.71:7401
+4.STF中允许后，连接成功即可进行app自动化测试
