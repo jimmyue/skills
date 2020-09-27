@@ -27,6 +27,8 @@ JENKINS_USER="root"
 chown -R root:root /var/lib/jenkins
 chown -R root:root /var/cache/jenkins
 chown -R root:root /var/log/jenkins
+#解决html report格式问题：系统管理->脚步命令行
+System.setProperty("hudson.model.DirectoryBrowserSupport.CSP", "")
 
 【python安装】
 https://www.jianshu.com/p/c169a76862cf
