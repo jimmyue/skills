@@ -44,10 +44,12 @@ docker stop container-name/container-id     停止容器
 docker logs container-name/container-id     容器日志
 docker rm container-name/container-id       删除容器
 docker rename JimmyCentos JimmyCentos7      重命名容器名称
+docker logs --tail 50 container-id          查看最新50行日志
 docker run -itd -p 8080:8080 --privileged=true --name centos7 imageID /usr/sbin/init  创建并运行容器
 docker exec -it -u root container-name/container-id /bin/bash    以root用户进入容器
 docker cp container-id:容器文件路径 本地路径                     文件传输(容器 -> 本机)
 docker cp 本地文件路径 container-id:容器路径                     文件传输(本机 -> 容器)
+
 
 【添加容器端口映射】注意是否关闭防火墙或者添加防火墙端口
 systemctl stop docker
@@ -57,6 +59,20 @@ vi config.v2.json       #添加需要映射的端口
 systemctl start docker
 systemctl status firewalld.service   #查看防火墙状态
 netstat -anpt                        #查看端口状态
+lsof -i:8080                         #查看8080端口是否占用
+
+
+【docker容器更新时间】
+docker cp /etc/localtime  container-id:/etc/
+若报错，则使用下面指令
+docker cp /usr/share/zoneinfo/Asia/Shanghai container-id:/etc/localtime
+
+【docker部署jenkins】
+sudo mkdir -p /var/jenkins_mount
+chmod 777 /var/jenkins_mount
+sudo docker run -u root -d -p 8080:8080 -p 50000:50000 -v /var/jenkins_mount:/var/jenkins_home -v /etc/localtime:/etc/localtime --name Jenkins jenkinsci/blueocean 
+插件镜像地址
+https://mirrors.aliyun.com/jenkins/updates/update-center.json
 
 【docker上分布式locust】
 https://docs.locust.io/en/stable/running-locust-docker.html#running-your-tests

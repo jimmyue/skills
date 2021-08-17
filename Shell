@@ -1,0 +1,184 @@
+1.执行Shell脚本
+chmod +x ./test.sh  #使脚本具有执行权限
+./test.sh           #执行脚本
+
+2.定义变量
+your_name="jimmy"
+
+3.使用变量
+echo $your_name
+
+4.只读变量
+readonly your_name
+
+5.删除变量
+unset your_name
+
+6.shell字符串
+单引号无法使用变量
+双引号里可以有变量，可以出现转义字符
+
+7.拼接字符串
+"hello "$your_name" !"
+"hello ${your_name} !"
+'hello '$your_name' !'
+
+8.获取字符串长度
+echo ${#string}
+
+9.提取子字符串
+echo ${string:1:4}
+
+10.查找子字符串
+查找字符 i 或 o 的位置(哪个字母先出现就计算哪个)，` 是反引号
+echo `expr index "$string" io`
+
+11.定义数组
+array_name=(value0 value1 value2 value3)
+
+12.读取数组
+echo ${array_name[@]}
+
+13.获取数组的长度
+length=${#array_name[@]}  #取得数组元素的个数
+lengthn=${#array_name[n]} #取得数组单个元素的长度
+
+14.注释
+单行注释#
+多行注释
+:<<EOF
+注释内容...
+注释内容...
+注释内容...
+EOF
+
+15.传递参数
+$ chmod +x test.sh 
+$ ./test.sh 1 2 3
+echo "执行的文件名：$0";
+echo "第一个参数为：$1";
+echo "第二个参数为：$2";
+echo "第三个参数为：$3";
+
+16.基本运算符
+val=`expr $a + $b`
+注意：
+完整的表达式要被 ` `
+表达式和运算符之间要有空格
+关系运算符(-eq、-ne、-gt、-lt、-ge、-le)对应(=、!=、>、<、>=、<=)
+布偶运算符(!、-o、-a)对应(非、或、与)
+逻辑运算符(&&、||)对应(and、or)
+字符运算符(=、!=、-z、-n、$)对应(相等、不相等、长度为0、长度不为0、不为空)
+文件测试运算符
+-b file   #检测文件是否是块设备文件，如果是，则返回 true。
+-c file   #检测文件是否是字符设备文件，如果是，则返回 true。
+-d file   #检测文件是否是目录，如果是，则返回 true。
+-f file   #检测文件是否是普通文件（既不是目录，也不是设备文件），如果是，则返回 true。
+-g file   #检测文件是否设置了 SGID 位，如果是，则返回 true。
+-k file   #检测文件是否设置了粘着位(Sticky Bit)，如果是，则返回 true。
+-p file   #检测文件是否是有名管道，如果是，则返回 true。
+-u file   #检测文件是否设置了 SUID 位，如果是，则返回 true。
+-r file   #检测文件是否可读，如果是，则返回 true。
+-w file   #检测文件是否可写，如果是，则返回 true。
+-x file   #检测文件是否可执行，如果是，则返回 true。
+-s file   #检测文件是否为空（文件大小是否大于0），不为空返回 true。
+-e file   #检测文件（包括目录）是否存在，如果是，则返回 true。
+
+17.printf命令
+printf "%-10s %-8s %-4.2f\n" 郭靖 男 66.1234
+郭靖     男      66.12
+
+18.if
+if condition1
+then
+    command1
+elif condition2 
+then 
+    command2
+else
+    commandN
+fi
+
+19.for
+for str in This is a string
+do
+    echo $str
+done
+
+20.while
+while condition
+do
+    command
+done
+
+21.until
+until condition
+do
+    command
+done
+
+22.case ... esac
+case 值 in
+模式1)
+    command
+    ;;
+模式2)
+    command
+    ;;
+esac
+
+23.函数
+funWithParam(){
+    echo "第一个参数为 $1 !"
+    echo "第二个参数为 $2 !"
+    echo "第十个参数为 $10 !"
+    echo "第十个参数为 ${10} !"
+    echo "第十一个参数为 ${11} !"
+    echo "参数总数有 $# 个!"
+    echo "作为一个字符串输出所有参数 $* !"
+    return `expr $1 + ${11}`
+}
+funWithParam 1 2 3 4 5 6 7 8 9 34 73
+echo $?
+
+输出结果：
+第一个参数为 1 !
+第二个参数为 2 !
+第十个参数为 10 !
+第十个参数为 34 !
+第十一个参数为 73 !
+参数总数有 11 个!
+作为一个字符串输出所有参数 1 2 3 4 5 6 7 8 9 34 73 !
+74
+
+知识点：
+1.大于9的参数需要大括号${n}
+2.$#代表参数个数
+3.$*输出所有参数
+4.$?获取函数返回值
+
+24.输入\输出重定向
+command > file    #将输出重定向到 file。
+command > file    #将输入重定向到 file。
+command >> file   #将输出以追加的方式重定向到 file。
+n > file          #将文件描述符为 n 的文件重定向到 file。
+n >> file         #将文件描述符为 n 的文件以追加的方式重定向到 file。
+n >& m            #将输出文件 m 和 n 合并。
+n <& m            #将输入文件 m 和 n 合并。
+<< tag            #将开始标记 tag 和结束标记 tag 之间的内容作为输入。
+示例：
+who > users
+cat users
+who >> users
+cat users
+
+25.文件包含
+.或者source 引用文件
+示例：
+test1.sh 代码如下：
+url="http://www.runoob.com"
+test2.sh 代码如下：
+. ./test1.sh
+echo "菜鸟教程官网地址：$url"
+输出结果：菜鸟教程官网地址：http://www.runoob.com
+
