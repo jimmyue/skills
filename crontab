@@ -1,0 +1,14 @@
+1.进入root用户下crontab配置文件
+crontab -e -u root
+
+2.输入i添加定时任务后wq!保存
+*  *  *  *  *  command
+
+3.重启crond
+/sbin/service crond reload
+
+4.查看日志，显示最新20条记录
+tail -n 20 /var/log/cron
+
+5.查看当前定时任务
+crontab -l
