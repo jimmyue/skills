@@ -13,6 +13,7 @@ Start.bat启动文件新建 --- java -jar -Xmx2G BurpLoaderKeygen.jar
 连接代理后，直接浏览器访问http://burp，点击【CA Aertificate】下载证书，双击安装证书，将证书安装到“受信任的根证书颁发机构”即可
 
 4.扩展extender
+https://portswigger.net/bappstore
 CSRF Scanner、SQLiPy Sqlmap Integration、XSS Validator、Python Scripter、AuthMatrix、J2EEScan、Active Scan++、Java Deserialization Scanner
 
 5.过滤器显示
