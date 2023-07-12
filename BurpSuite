@@ -49,3 +49,17 @@ User options->Display->设置Font(宋体 11px)、Use a specific character set(UT
 (1).把抓到的请求导入到插件里，替换掉cookie信息进行越权测试 (比如纵向越权，用低权限的用户cookie信息替换掉高权限用户的cookie信息，去请求接口)；
 (2).把抓到的请求导入发送到Repeater(重放请求)菜单中，替换掉cookie信息，然后重新请求接口，进行越权测试；
 (3).甚至把抓取的接口信息，放到postman里，替换掉cookie信息进行越权测试
+使用插件autorize测试越权：
+1.有效的低权限cookie复制到Configuration中，或者点击fetch cookies header会从最近一次请求历史中提取cookie
+2.开启插件，Autorize is on
+3.在burp的代理浏览器，以高权限用户访问页面，此时插件左边会获取到请求
+4.插件记录三种结果
+Enforced!（绿色）--- 不存在越权
+Bypassed!（红色）--- 存在越权
+Is enforced??? (please configure enforcement detector) (黄色) --- 无法判断，设置过滤器判断
+5.过滤器设置：通过Request/Response Viewers查看返回差异，然后再添加过滤器
+Enforement Detector（低权限返回过滤设置）/ Detector Unauthenticated（无cooike返回过滤设置）
+6.当以下接口返回长度一致时，就可能存在漏洞了，需要注意
+Orig.Len（当前接口返回长度）/ Modif.Len（低权限cookie接口返回长度）/ Unauth.Len（无cookie接口返回长度）
+Authz.Status     --- 代表高权限账号和低权限账号对比结果
+Unauth.Status  --- 代表高权限账号和无cooike请求对比结果
