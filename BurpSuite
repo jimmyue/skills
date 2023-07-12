@@ -39,6 +39,9 @@ Help->diagnostics 搜索Browser，找到Burp Browser binaries路径。将安装�
 10.解决乱码
 User options->Display->设置Font(宋体 11px)、Use a specific character set(UTF-8)
 
+11.导出项目
+Project -> Save copy
+
 
 一.越权漏洞：
 1.无登录越权：即无登录但有URL地址，能访问到系统数据
