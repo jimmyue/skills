@@ -114,7 +114,7 @@ Payloads->Payload setting->Select generator->Extension payload generator：XSS V
 Payloads->Payload processing->Add->Invoke Burp extension：XSS Validator
 4.修改Settings参数
 Settings->Grep-Match->Clear
-Settings->Grep-Match->Add：xss_result（与xssValidator中Grep Phrase一直）
+Settings->Grep-Match->Add：xss_result（与xssValidator中Grep Phrase一致）
 5.执行自动扫描Start attack
 6.查看结果，xss_result值为1的就有XSS漏洞
 7.在浏览器中重新，右键有漏洞的请求->Request in browser->In original session,复制后在代理浏览器打开
