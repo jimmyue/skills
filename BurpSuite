@@ -53,7 +53,7 @@ Project -> Save copy
 (1).把抓到的请求导入到插件里，替换掉cookie信息进行越权测试 (比如纵向越权，用低权限的用户cookie信息替换掉高权限用户的cookie信息，去请求接口)；
 (2).把抓到的请求导入发送到Repeater(重放请求)菜单中，替换掉cookie信息，然后重新请求接口，进行越权测试；
 (3).甚至把抓取的接口信息，放到postman里，替换掉cookie信息进行越权测试
-使用插件autorize测试越权：
+【burpsuite使用插件autorize测试越权】：
 1.有效的低权限cookie复制到Configuration中，或者点击fetch cookies header会从最近一次请求历史中提取cookie
 2.开启插件，Autorize is on
 3.在burp的代理浏览器，以高权限用户访问页面，此时插件左边会获取到请求
@@ -73,7 +73,7 @@ Unauth.Status  --- 代表高权限账号和无cooike请求对比结果
 CSRF（Cross-site Request Forgery，跨站请求伪造）是一种针对网站的恶意利用；
 CSRF攻击可以利用用户已经登陆或已经授权的状态，伪造合法用户发出请求给受信任的网点，从而实现在未授权的情况下执行一些特权操作。
 CSRF与XSS听起来很像，但攻击方式完全不同。XSS攻击是利用受信任的站点攻击客户端用户，而CSRF是伪装成受信任的用户攻击受信任的站点。
-【安装CSRF Scanner插件检测】：
+【burpsuite安装CSRF Scanner插件检测】：
 抓取接口和主动扫描时会自动检测出该漏洞
 【使用工具CSRF PoC generator手工验证CSRF】：
 1.点击对应接口，右键Engagemeng tools -> Generate CSRF PoC
@@ -90,3 +90,31 @@ CSRF与XSS听起来很像，但攻击方式完全不同。XSS攻击是利用受�
 在敏感操作的参数中，增加完全随机的Token参数进行校验。这是目前业内防止CSRF攻击最常用的方法。因为CSRF产生的根本原因是，进行敏感操作时用户每次发送的请求都完全相同。
 因此，攻击者就可以把这样的请求进行封装包裹，诱导用户点击链接并发出请求。而如果在进行敏感操作时，增加完全随机的Token参数，每次进行敏感操作时发送的请求都不完全相同，
 攻击者也就没有办法伪造出一个合法的敏感操作请求，也就无法实施CSRF攻击。
+
+
+三.XSS漏洞
+1.反射型XSS，恶意脚本来源于HTTP请求中
+2.存储型XSS，恶意脚本来源于Web数据库
+3.基于DOM的XSS，仅存在于客户端的漏洞，即与服务器端无任何交互操作
+【burpsuite安装XSS Validator插件检测】
+一、环境配置
+1.下载Phantomjs，地址：http://phantomjs.org/download.html
+2.下载xss.js，地址：https://github.com/nVisium/xssValidator
+3.将xss.js和phantomjs.exe放同一文件夹下，打开cmd执行：phantomjs xss.js
+4.BApp Store下安装burpsuite插件XSS Validator
+二、使用插件XSS Validator自动化测试XSS漏洞
+1.xssValidator->Grep Phrase：xss_result
+2.发送请求到Intruder，修改Positions参数
+Positions->payload positions->Clear§
+Positions->payload positions->Add§(选中需要修改的参数再点击)
+例如：GET /vulnerabilities/xss_r/?name=§jimmy§ HTTP/1.1
+3.修改Payloads参数
+Payloads->Payload sets->Payload type：Extension-generated
+Payloads->Payload setting->Select generator->Extension payload generator：XSS Validator Payloads
+Payloads->Payload processing->Add->Invoke Burp extension：XSS Validator
+4.修改Settings参数
+Settings->Grep-Match->Clear
+Settings->Grep-Match->Add：xss_result（与xssValidator中Grep Phrase一直）
+5.执行自动扫描Start attack
+6.查看结果，xss_result值为1的就有XSS漏洞
+7.在浏览器中重新，右键有漏洞的请求->Request in browser->In original session,复制后在代理浏览器打开
