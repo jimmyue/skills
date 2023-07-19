@@ -103,7 +103,7 @@ CSRF与XSS听起来很像，但攻击方式完全不同。XSS攻击是利用受�
 3.将xss.js和phantomjs.exe放同一文件夹下，打开cmd执行：phantomjs xss.js
 4.BApp Store下安装burpsuite插件XSS Validator
 二、使用插件XSS Validator自动化测试XSS漏洞
-1.xssValidator->Grep Phrase：xss_result
+1.burpsuite->xssValidator->Grep Phrase：xss_result
 2.发送请求到Intruder，修改Positions参数
 Positions->payload positions->Clear§
 Positions->payload positions->Add§(选中需要修改的参数再点击)
