@@ -78,3 +78,32 @@ function myFunction() {
 </script>
 </body>
 </html>
+
+
+七、JavaScript 验证 API
+1.约束验证 DOM 方法
+checkValidity() ：input元素中的数据是合法的返回true，否则返回 false
+setCustomValidity() ：设置input元素的 validationMessage 属性，用于自定义错误提示信息的方法
+2.约束验证 DOM 属性
+validity ：布尔属性值，返回input输入值是否合法
+validationMessage ：浏览器错误提示信息
+willValidate ：指定input是否需要验证
+3.Validity属性
+customError ：设置为true, 如果设置了自定义的 validity 信息。
+patternMismatch ：设置为true, 如果元素的值不匹配它的模式属性。
+rangeOverflow ：设置为true, 如果元素的值大于设置的最大值。
+rangeUnderflow ：设置为true, 如果元素的值小于它的最小值。
+stepMismatch ：设置为true, 如果元素的值不是按照规定的 step 属性设置。
+tooLong ：设置为true, 如果元素的值超过了 maxLength 属性设置的长度。
+typeMismatch ：设置为true, 如果元素的值不是预期相匹配的类型。
+valueMissing ：设置为true，如果元素 (required 属性) 没有值。
+valid ：设置为true，如果元素的值是合法的。
+
+
+八、JavaScript this 关键字
+在方法中，this 表示该方法所属的对象。
+如果单独使用，this 表示全局对象。
+在函数中，this 表示全局对象。
+在函数中，在严格模式下，this 是未定义的(undefined)。
+在事件中，this 表示接收事件的元素。
+类似 call() 和 apply() 方法可以将 this 引用到任何对象
