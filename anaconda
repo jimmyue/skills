@@ -1,4 +1,5 @@
-conda create --name py36 python=3.6
-conda env list
-conda activate py36
-conda deactivate py36
+conda env list                           #查看所有虚拟环境
+conda create --name py36 python=3.6      #创建虚拟环境
+conda activate py36                      #激活虚拟环境
+conda deactivate                         #推出虚拟环境
+conda remove --name py36 --all           #删除虚拟环境
