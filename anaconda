@@ -3,3 +3,11 @@ conda create --name py36 python=3.6      #创建虚拟环境
 conda activate py36                      #激活虚拟环境
 conda deactivate                         #推出虚拟环境
 conda remove --name py36 --all           #删除虚拟环境
+
+#设置conda国内镜像
+conda config --show channels                #查看国内镜像地址
+conda config --remove channels 源名称或链接  #删除镜像地址
+conda config --set show_channel_urls yes    #安装包时显示镜像地址
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
