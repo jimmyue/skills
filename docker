@@ -57,9 +57,17 @@ cd /var/lib/docker/containers/[容器ID]
 vi hostconfig.json      #添加需要映射的端口
 vi config.v2.json       #添加需要映射的端口
 systemctl start docker
-systemctl status firewalld.service   #查看防火墙状态
-netstat -anpt                        #查看端口状态
-lsof -i:8080                         #查看8080端口是否占用
+
+systemctl status firewalld.service                             #查看防火墙状态
+systemctl start firewalld.service                              #开启防火墙(临时)
+systemctl enable firewalld.service                             #开启防火墙(开机启动)
+systemctl restart firewalld.service                            #重启防火墙
+systemctl stop firewalld.service                               #关闭防火墙(临时)
+systemctl disable firewalld.service                            #关闭防火墙(永久)
+firewall-cmd --zone=public --add-port=2181/tcp --permanent     #添加开放端口
+firewall-cmd --zone=public --remove-port=2181/tcp --permanent  #移除开放端口
+netstat -anpt                                                  #查看端口状态
+lsof -i:8080                                                   #查看8080端口是否占用
 
 
 【docker容器更新时间】
