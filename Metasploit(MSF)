@@ -5,7 +5,7 @@ Metasploit可以用来信息收集、漏洞探测、漏洞利用等渗透测试�
 刚开始的Metasploit是采用Perl语言编写的，但是再后来的新版中，改成了用Ruby语言编写的了。在kali中，自带了Metasploit工具。
 
 1.安装搭建
-docker安装（版本可能不是最新）
+docker安装（镜像版本可能不是最新）
 sudo docker run --rm -it -p 443:443 -v ~/.msf4:/root/.msf4 -v /tmp/msf:/tmp/data metasploitframework/metasploit-framework
 linux直接系统安装(可更新到最新版本)
 curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
