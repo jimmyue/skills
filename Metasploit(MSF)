@@ -4,8 +4,11 @@ Metasploit Framework(MSF) 是一款开源安全漏洞检测工具，附带数千
 Metasploit可以用来信息收集、漏洞探测、漏洞利用等渗透测试的全流程，被安全社区冠以“可以黑掉整个宇宙”之名。
 刚开始的Metasploit是采用Perl语言编写的，但是再后来的新版中，改成了用Ruby语言编写的了。在kali中，自带了Metasploit工具。
 
-1.docker环境搭建
-sudo docker run --rm -it -p 443:443 -v ~/.msf4:/root/.msf4 -v /tmp/msf:/tmp/data remnux/metasploit
+1.安装搭建
+docker安装（版本可能不是最新）
+sudo docker run --rm -it -p 443:443 -v ~/.msf4:/root/.msf4 -v /tmp/msf:/tmp/data metasploitframework/metasploit-framework
+linux直接系统安装(可更新到最新版本)
+curl https://raw.githubusercontent.com/rapid7/metasploit-omnibus/master/config/templates/metasploit-framework-wrappers/msfupdate.erb > msfinstall && chmod 755 msfinstall && ./msfinstall
 
 2.基础用法
 msfconsole                                          #进入框架
