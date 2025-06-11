@@ -1,1 +1,32 @@
+一、n8n汉化准备
+下载对应版本editor-ui.tar.gz，并解压到/home/n8n_data
+https://github.com/other-blowsnow/n8n-i18n-chinese/releases
 
+二、docker部署n8n
+docker run -it  --name n8n  \
+-p 5678:5678 \
+-v /data/n8n:/data \
+-v /home/n8n_data/dist:/usr/local/lib/node_modules/n8n/node_modules/n8n-editor-ui/dist \
+-e GENERIC_TIMEZONE="Asia/Shanghai" \
+-e TZ="Asia/Shanghai" \
+-e N8N_DEFAULT_LOCALE=zh-CN \
+-e N8N_SECURE_COOKIE=false \
+-e DB_TYPE=postgresdb \
+-e DB_POSTGRESDB_DATABASE=n8n \
+-e DB_POSTGRESDB_HOST=host \
+-e DB_POSTGRESDB_PORT=5432 \
+-e DB_POSTGRESDB_USER=user \
+-e DB_POSTGRESDB_PASSWORD=password \
+n8nio/n8n:1.95.3
+
+三、配置python环境
+1.n8n容器内配置python虚拟环境：
+docker exec -u root -it n8n sh
+apk add  py3-virtualenv
+python3 -m venv /data/venv
+chown -R node:node /data/venv
+exit
+
+2.n8n页面创建Execute Command
+/data/venv/bin/pip3 install pandas                 # 安装python包
+/data/venv/bin/python3  /data/work/xxx.py   # 运行/data/n8n下python脚本
