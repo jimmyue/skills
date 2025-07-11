@@ -65,4 +65,12 @@ send_keys                         在当前焦点的元素中模拟键盘输入
 send_keys_to_element              给指定元素模拟键盘输入 
 perform                           运行一组鼠标键盘动作 
 
+六、谷歌浏览器F12开发者工具，快速定位元素
+1.开发者工具左上角点击工具(ctrl+shift+c)，点击需要定位的元素，右键复制selector、xpath、js等
+2.元素(Elements)TAB页，ctrl+f可以进行元素搜索，支持CSS_SELECTOR和XPATH
+3.控制台(Console)TAB页，定位调试：
+$()    返回与指定的CSS选择器相匹配的第一个元素，等同于document.querySelector()
+$$()   返回与指定的CSS选择器相匹配的所有元素的数组，等同于document.querySelectorAll()
+$x()   返回与指定的XPath相匹配的所有元素的数组
+
 
