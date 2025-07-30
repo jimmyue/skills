@@ -1,0 +1,120 @@
+https://www.cnvd.org.cn
+
+1.安装BurpSuite
+BurpSuite官方下载并安装 --- https://portswigger.net/burp/releases
+BurpLoaderKeygen下载至BurpSuite安装目录 --- https://github.com/h3110w0r1d-y/BurpLoaderKeygen/releases
+Start.bat启动文件新建 --- java -jar -Xmx2G BurpLoaderKeygen.jar
+
+2.代理设置
+选择【Proxy】→【Options】，配置代理监听器，默认监听127.0.0.1:8080且是运行状态
+
+3.安装CA证书
+使用内部浏览器时不需要安装CA证书，使用外部浏览器时，若未安装CA证书则无法拦截HTTPS请求。
+连接代理后，直接浏览器访问http://burp，点击【CA Aertificate】下载证书，双击安装证书，将证书安装到“受信任的根证书颁发机构”即可
+
+4.扩展extender
+https://portswigger.net/bappstore
+Active Scan++、CSRF Scanner、XSS Validator、HTTP Request Smuggler、J2EEScan、SQLiPy Sqlmap Integration、Autorize、Param MIner、
+JSON Web Tokens、Turbo Intruder、Bypass WAF、Java Deserialization Scanner、CSP-Bypass、Autowasp、Upload Scanner、NMAP Parser
+
+5.过滤器显示
+Target->Scope->Include in scope(包含规则)添加目标地址 --- 设置目标地址
+Target->Site map->Fulter：Showing all items         --- 显示所有元素
+Target->Site map->Filter：Show only in-scope items  --- 只显示设置的目标地址内容
+
+6.浏览器设置
+Help->diagnostics 搜索Browser，找到Burp Browser binaries路径。将安装目录下对应浏览器版本复制过去。
+
+7.拦截请求
+选择【Proxy】→【Intercept】，默认【Intercept is on】即拦截开启，访问请求时页面会一直加载中，需要在此页面进行放行【Forward】、丢弃【Drop】或者关闭拦截【Intercept is off】请求才会进入下一步。
+
+8.重放器
+无论是在拦截过程中、历史记录中还是站点地图中都有将请求发送到重放器的操作。选中请求后右键，点击【Send to Repeater】
+在【Repeater】页面即可看到该请求，修改参数请求用来判断是否存在漏洞。
+
+9.扫描器
+一个很强大的网络漏洞扫描器，可以自动抓取内容并审计多种类型的漏洞。
+代理浏览器后将系统都访问一次，然后选择【Dashboard】→【New scan】
+将扫描结果生成报告，选择【Target】→【Site map】进入站点地图，可以在问题窗口针对单个生成报告，也可以选择结构目录中的文件或整个项目生成报告。
+
+10.解决乱码
+User options->Display->设置Font(宋体 11px)、Use a specific character set(UTF-8)
+
+11.导出项目
+Project -> Save copy
+
+
+一.越权漏洞：
+1.无登录越权：即无登录但有URL地址，能访问到系统数据
+2.纵向越权：有登录无菜单权限，能访问到页面上访问不到的高权限用户能访问的数据
+3.横向越权：A用户登录可以访问B用户的数据，有B用户的URL，A可以直接看到B用户的数据
+4.token失效越权：用失效的token信息去请求接口，能访问到系统里的数据
+越权测试：下面三种方式皆可进行越权测试
+(1).把抓到的请求导入到插件里，替换掉cookie信息进行越权测试 (比如纵向越权，用低权限的用户cookie信息替换掉高权限用户的cookie信息，去请求接口)；
+(2).把抓到的请求导入发送到Repeater(重放请求)菜单中，替换掉cookie信息，然后重新请求接口，进行越权测试；
+(3).甚至把抓取的接口信息，放到postman里，替换掉cookie信息进行越权测试
+【burpsuite使用插件autorize测试越权】：
+1.有效的低权限cookie复制到Configuration中，或者点击fetch cookies header会从最近一次请求历史中提取cookie
+2.开启插件，Autorize is on
+3.在burp的代理浏览器，以高权限用户访问页面，此时插件左边会获取到请求
+4.插件记录三种结果
+Enforced!（绿色）--- 不存在越权
+Bypassed!（红色）--- 存在越权
+Is enforced??? (please configure enforcement detector) (黄色) --- 无法判断，设置过滤器判断
+5.过滤器设置：通过Request/Response Viewers查看返回差异，然后再添加过滤器
+Enforement Detector（低权限返回过滤设置）/ Detector Unauthenticated（无cooike返回过滤设置）
+6.当以下接口返回长度一致时，就可能存在漏洞了，需要注意
+Orig.Len（当前接口返回长度）/ Modif.Len（低权限cookie接口返回长度）/ Unauth.Len（无cookie接口返回长度）
+Authz.Status     --- 代表高权限账号和低权限账号对比结果
+Unauth.Status  --- 代表高权限账号和无cooike请求对比结果
+
+
+二.CSRF漏洞
+CSRF（Cross-site Request Forgery，跨站请求伪造）是一种针对网站的恶意利用；
+CSRF攻击可以利用用户已经登陆或已经授权的状态，伪造合法用户发出请求给受信任的网点，从而实现在未授权的情况下执行一些特权操作。
+CSRF与XSS听起来很像，但攻击方式完全不同。XSS攻击是利用受信任的站点攻击客户端用户，而CSRF是伪装成受信任的用户攻击受信任的站点。
+【burpsuite安装CSRF Scanner插件检测】：
+抓取接口和主动扫描时会自动检测出该漏洞
+【使用工具CSRF PoC generator手工验证CSRF】：
+1.点击对应接口，右键Engagemeng tools -> Generate CSRF PoC
+2.修改请求参数，点击Regenerate -> Test in browser
+3.打开代理的浏览器，访问复制的链接
+4.查看页面是否根据新的参数改变，状态改变则存在CSRF漏洞
+【漏洞修改】：
+●增加二次验证机制
+在敏感操作时候，不再直接通过某个请求执行，而是再次验证用户口令或者再次验证类似验证码等随机数。如：转账时，要求用户二次输入密码。
+●校验HTTP Referer字段
+校验HTTP Referer字段可以保证相关敏感操作来自授权站点的跳转。在HTTP协议中，定义了一个访问来源的字段，即HTTP_REFERER。站点可以在后端校验Referer是否来自于正常的站内跳转。
+如果攻击者诱导用户点击跳转链接，则Referer就为攻击者的主机，与网站内部内部跳转情况下的Referer字段不同。
+●增加Token参数进行校验
+在敏感操作的参数中，增加完全随机的Token参数进行校验。这是目前业内防止CSRF攻击最常用的方法。因为CSRF产生的根本原因是，进行敏感操作时用户每次发送的请求都完全相同。
+因此，攻击者就可以把这样的请求进行封装包裹，诱导用户点击链接并发出请求。而如果在进行敏感操作时，增加完全随机的Token参数，每次进行敏感操作时发送的请求都不完全相同，
+攻击者也就没有办法伪造出一个合法的敏感操作请求，也就无法实施CSRF攻击。
+
+
+三.XSS漏洞
+1.反射型XSS，恶意脚本来源于HTTP请求中
+2.存储型XSS，恶意脚本来源于Web数据库
+3.基于DOM的XSS，仅存在于客户端的漏洞，即与服务器端无任何交互操作
+【burpsuite安装XSS Validator插件检测】
+一、环境配置
+1.下载Phantomjs，地址：http://phantomjs.org/download.html
+2.下载xss.js，地址：https://github.com/nVisium/xssValidator
+3.将xss.js和phantomjs.exe放同一文件夹下，打开cmd执行：phantomjs xss.js
+4.BApp Store下安装burpsuite插件XSS Validator
+二、使用插件XSS Validator自动化测试XSS漏洞
+1.burpsuite->xssValidator->Grep Phrase：xss_result
+2.发送请求到Intruder，修改Positions参数
+Positions->payload positions->Clear§
+Positions->payload positions->Add§(选中需要修改的参数再点击)
+例如：GET /vulnerabilities/xss_r/?name=§jimmy§ HTTP/1.1
+3.修改Payloads参数
+Payloads->Payload sets->Payload type：Extension-generated
+Payloads->Payload setting->Select generator->Extension payload generator：XSS Validator Payloads
+Payloads->Payload processing->Add->Invoke Burp extension：XSS Validator
+4.修改Settings参数
+Settings->Grep-Match->Clear
+Settings->Grep-Match->Add：xss_result（与xssValidator中Grep Phrase一致）
+5.执行自动扫描Start attack
+6.查看结果，xss_result值为1的就有XSS漏洞
+7.在浏览器中重新，右键有漏洞的请求->Request in browser->In original session,复制后在代理浏览器打开
