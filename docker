@@ -27,7 +27,7 @@ systemctl status docker  查看docker状态
 【镜像操作】
 docker images                                   查看所有镜像
 docker pull centos                              下载centos镜像
-docker pull docker.1panel.live/centos           官方镜像下载不了时，可以加上镜像源地址
+docker pull docker.1panel.live/centos           官方镜像下载不了时，可以加上【镜像源地址】！！！！！！
 docker rmi 镜像id                                删除镜像
 docker search --no-trunc centos                 查找相关镜像
 docker tag IMAGE_ID jimmycentos:v3.0            重命名镜像名称
