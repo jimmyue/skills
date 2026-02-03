@@ -1,0 +1,11 @@
+一、Claude Code安装
+npm install -g @anthropic-ai/claude-code
+
+二、Claude Code启动
+claude
+
+三、配置智谱GLM
+npx @z_ai/coding-helper
+
+四、查看skills
+/skills
